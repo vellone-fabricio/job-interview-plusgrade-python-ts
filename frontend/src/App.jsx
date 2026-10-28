@@ -1,5 +1,5 @@
 import './App.css'
-import StayPage from './StayPage.jsx'
+import StayPage from './pages/StayPage'
 
 function App() {
   const reservationId = window.location.pathname.match(/^\/stay\/([^/]+)/)?.[1]
