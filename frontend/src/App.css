@@ -1,0 +1,40 @@
+main {
+  max-width: 40rem;
+  margin: 2rem auto;
+  padding: 0 1rem;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+}
+
+h1 {
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+h2 {
+  font-size: 1.15rem;
+  margin-bottom: 0.5rem;
+}
+
+section {
+  margin-top: 1.5rem;
+}
+
+section + section {
+  border-top: 1px solid #ddd;
+  padding-top: 1.5rem;
+}
+
+ul {
+  list-style: none;
+}
+
+li + li {
+  margin-top: 0.75rem;
+}
+
+li p,
+li small {
+  display: block;
+  color: #666;
+}
