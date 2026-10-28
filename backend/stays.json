@@ -1,0 +1,50 @@
+{
+  "generated_at": "2026-11-13T07:30:00Z",
+  "stays": [
+    {
+      "reservation_id": "LIS-1042",
+      "guest_first_name": "Marta",
+      "hotel": { "name": "Casa Alfama", "currency": "EUR" },
+      "arrival_date": "2026-11-14",
+      "nights": 1,
+      "booked_room": "Standard Double",
+      "offers": [
+        { "id": "L1", "kind": "upgrade", "name": "Superior Double", "description": "Higher floor, bigger bathroom", "price": 25.00, "per": "night", "bookable_until": "2026-11-13T15:00:00Z" },
+        { "id": "L2", "kind": "upgrade", "name": "River View Room", "description": "Balcony over the Tagus", "price": 45.00, "per": "night", "bookable_until": "2026-11-13T15:00:00Z" },
+        { "id": "L3", "kind": "extra", "name": "Breakfast for two", "description": "Served 7:00 to 10:30", "price": 28.00, "per": "night", "bookable_until": "2026-11-14T13:00:00Z" },
+        { "id": "L4", "kind": "extra", "name": "Spa ritual for two", "description": "90 minutes on your first evening", "price": 140.00, "per": "stay", "bookable_until": "2026-11-12T15:00:00Z" },
+        { "id": "L5", "kind": "extra", "name": "Bottle of port in the room", "description": "Waiting for you on arrival", "price": 35.00, "per": "stay", "bookable_until": "2026-11-14T15:00:00Z" }
+      ]
+    },
+    {
+      "reservation_id": "TYO-2290",
+      "guest_first_name": "Daniel",
+      "hotel": { "name": "Hotel Kanda Gate", "currency": "JPY" },
+      "arrival_date": "2026-11-14",
+      "nights": 2,
+      "booked_room": "Moderate Double",
+      "offers": [
+        { "id": "T1", "kind": "upgrade", "name": "Superior Twin", "description": "Higher floor, two single beds", "price": 4500, "per": "night", "bookable_until": "2026-11-13T12:00:00Z" },
+        { "id": "T2", "kind": "upgrade", "name": "Corner Suite", "description": "Dual aspect, separate living area", "price": 12000, "per": "night", "bookable_until": "2026-11-13T06:00:00Z" },
+        { "id": "T3", "kind": "extra", "name": "Japanese breakfast for two", "description": "Grilled fish, rice, miso", "price": 5600, "per": "night", "bookable_until": "2026-11-13T18:00:00Z" },
+        { "id": "T4", "kind": "extra", "name": "Private tea ceremony", "description": "60 minutes with a tea master", "price": 9000, "per": "stay", "bookable_until": "2026-11-13T09:00:00Z" },
+        { "id": "T5", "kind": "extra", "name": "Early check-in from 12:00", "description": "", "price": 5000, "per": "stay", "bookable_until": "2026-11-14T00:00:00Z" }
+      ]
+    },
+    {
+      "reservation_id": "LAX-0388",
+      "guest_first_name": "Priya",
+      "hotel": { "name": "The Larchmont", "currency": "USD" },
+      "arrival_date": "2026-11-14",
+      "nights": 4,
+      "booked_room": "Queen Room",
+      "offers": [
+        { "id": "A1", "kind": "upgrade", "name": "King Room", "description": "One king bed, city view", "price": 40.00, "per": "night", "bookable_until": "2026-11-13T22:00:00Z" },
+        { "id": "A2", "kind": "upgrade", "name": "Junior Suite", "description": "Sitting area, soaking tub", "price": 95.00, "per": "night", "bookable_until": "2026-11-13T22:00:00Z" },
+        { "id": "A3", "kind": "extra", "name": "Airport pick-up from LAX", "description": "Driver meets you at arrivals", "price": 85.00, "per": "stay", "bookable_until": "2026-11-13T10:00:00Z" },
+        { "id": "A4", "kind": "extra", "name": "Valet parking", "description": "", "price": 45.00, "per": "night", "bookable_until": "2026-11-14T22:00:00Z" },
+        { "id": "A5", "kind": "extra", "name": "Wine country day trip for two", "description": "Full day, Santa Ynez Valley", "price": 240.00, "per": "stay", "bookable_until": "2026-11-11T22:00:00Z" }
+      ]
+    }
+  ]
+}
