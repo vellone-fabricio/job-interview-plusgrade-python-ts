@@ -20,17 +20,21 @@ function StayPage({ reservationId }) {
       .catch((err) => setError(err.message))
   }, [stayPath])
 
-  const submit = () => {
+  async function submit() {
     setSubmitting(true)
     setSubmitError(null)
-    api(`${stayPath}/request`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ offer_ids: [...selected] }),
-    })
-      .then((request) => setStay((prev) => ({ ...prev, request })))
-      .catch((err) => setSubmitError(err.message))
-      .finally(() => setSubmitting(false))
+    try {
+      const request = await api(`${stayPath}/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ offer_ids: [...selected] }),
+      })
+      setStay((prev) => ({ ...prev, request }))
+    } catch (err) {
+      setSubmitError(err.message)
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   if (error) return <p>{error}</p>
