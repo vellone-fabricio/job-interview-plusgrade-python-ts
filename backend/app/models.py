@@ -30,6 +30,10 @@ class Stay(BaseModel):
     offers: list[Offer]
 
 
+class StayResponse(Stay):
+    generated_at: AwareDatetime
+
+
 class Snapshot(BaseModel):
     generated_at: AwareDatetime
     stays: list[Stay]

@@ -73,6 +73,9 @@ function StayPage({ reservationId }) {
 
   return (
     <main>
+      <p className="now">
+        Current time: <time dateTime={stay.generated_at}>{formatUtc(stay.generated_at)}</time>
+      </p>
       <h1>Hi {stay.guest_first_name}, your stay at {stay.hotel.name}</h1>
       <p>
         Reservation {stay.reservation_id}: {stay.booked_room}, arriving {stay.arrival_date} for{' '}
