@@ -1,0 +1,10 @@
+.now {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+  background: #fff;
+  font-size: 0.9rem;
+}

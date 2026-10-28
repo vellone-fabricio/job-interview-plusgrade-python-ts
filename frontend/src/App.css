@@ -6,17 +6,6 @@ main {
   line-height: 1.5;
 }
 
-.now {
-  position: fixed;
-  top: 1rem;
-  right: 1rem;
-  padding: 0.25rem 0.75rem;
-  border: 1px solid #ddd;
-  border-radius: 0.5rem;
-  background: #fff;
-  font-size: 0.9rem;
-}
-
 h1 {
   font-size: 1.5rem;
   margin-bottom: 0.25rem;
@@ -44,30 +33,9 @@ li + li {
   margin-top: 0.75rem;
 }
 
-li small,
-.hint {
+li small {
   display: block;
   color: #666;
-}
-
-.hint {
-  margin-bottom: 0.5rem;
-}
-
-label {
-  display: flex;
-  gap: 0.75rem;
-  align-items: baseline;
-  cursor: pointer;
-}
-
-label.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.actions {
-  margin-top: 1.5rem;
 }
 
 button {
@@ -78,37 +46,4 @@ button {
 
 button:disabled {
   cursor: not-allowed;
-}
-
-.modal {
-  margin: auto;
-  width: min(32rem, calc(100% - 2rem));
-  padding: 1.5rem;
-  border: none;
-  border-radius: 0.75rem;
-}
-
-.modal::backdrop {
-  background: rgb(0 0 0 / 0.4);
-}
-
-.modal section {
-  margin-top: 0;
-}
-
-.modal-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-}
-
-.error {
-  margin-top: 0.5rem;
-  color: #b00020;
-}
-
-.total {
-  margin-top: 1rem;
-  font-weight: bold;
 }

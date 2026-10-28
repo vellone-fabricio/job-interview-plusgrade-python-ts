@@ -1,0 +1,16 @@
+.hint {
+  margin-bottom: 0.5rem;
+  color: #666;
+}
+
+.option {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  cursor: pointer;
+}
+
+.option:has(input:disabled) {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

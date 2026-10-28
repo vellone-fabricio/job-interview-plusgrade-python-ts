@@ -1,15 +1,16 @@
 import { formatPrice, formatUtc } from '../utils'
+import styles from './OfferList.module.css'
 
 function OfferList({ title, hint, offers, currency, selected, onToggle, isDisabled }) {
   if (offers.length === 0) return null
   return (
     <section>
       <h2>{title}</h2>
-      {hint && <p className="hint">{hint}</p>}
+      {hint && <p className={styles.hint}>{hint}</p>}
       <ul>
         {offers.map((offer) => (
           <li key={offer.id}>
-            <label className={isDisabled(offer) ? 'disabled' : undefined}>
+            <label className={styles.option}>
               <input
                 type="checkbox"
                 checked={selected.has(offer.id)}

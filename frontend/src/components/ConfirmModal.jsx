@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react'
 import RequestSummary from './RequestSummary'
+import styles from './ConfirmModal.module.css'
 
 function ConfirmModal({ request, currency, nights, submitting, error, onConfirm, onCancel }) {
   const dialogRef = useRef(null)
@@ -9,7 +10,7 @@ function ConfirmModal({ request, currency, nights, submitting, error, onConfirm,
   }, [])
 
   return (
-    <dialog ref={dialogRef} className="modal" onClose={onCancel}>
+    <dialog ref={dialogRef} className={styles.modal} onClose={onCancel}>
       <RequestSummary
         title="Confirm your request"
         request={request}
@@ -17,8 +18,8 @@ function ConfirmModal({ request, currency, nights, submitting, error, onConfirm,
         nights={nights}
       />
       <p>Do you want to request these for your stay?</p>
-      {error && <p className="error">{error}</p>}
-      <div className="modal-actions">
+      {error && <p className={styles.error}>{error}</p>}
+      <div className={styles.actions}>
         <button type="button" onClick={onConfirm} disabled={submitting}>
           {submitting ? 'Sending…' : 'Yes'}
         </button>

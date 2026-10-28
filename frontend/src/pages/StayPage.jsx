@@ -4,6 +4,7 @@ import CurrentTime from '../components/CurrentTime'
 import OfferList from '../components/OfferList'
 import RequestSummary from '../components/RequestSummary'
 import { api, formatNights, sumTotals, toggleInSet } from '../utils'
+import styles from './StayPage.module.css'
 
 function StayPage({ reservationId }) {
   const [stay, setStay] = useState(null)
@@ -76,7 +77,7 @@ function StayPage({ reservationId }) {
             {...listProps}
           />
           <OfferList title="Extras" offers={byKind('extra')} {...listProps} />
-          <div className="actions">
+          <div className={styles.actions}>
             <button type="button" onClick={() => setConfirming(true)} disabled={selected.size === 0}>
               Request
             </button>

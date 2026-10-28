@@ -1,4 +1,5 @@
 import { formatNights, formatPrice } from '../utils'
+import styles from './RequestSummary.module.css'
 
 function RequestSummary({ title = 'Your request', request, currency, nights }) {
   return (
@@ -15,7 +16,7 @@ function RequestSummary({ title = 'Your request', request, currency, nights }) {
           </li>
         ))}
       </ul>
-      <p className="total">Total: {formatPrice(request.total, currency)}</p>
+      <p className={styles.total}>Total: {formatPrice(request.total, currency)}</p>
     </section>
   )
 }
