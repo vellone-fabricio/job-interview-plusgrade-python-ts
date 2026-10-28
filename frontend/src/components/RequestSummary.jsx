@@ -1,9 +1,9 @@
 import { formatNights, formatPrice } from '../utils'
 
-function RequestSummary({ request, currency, nights }) {
+function RequestSummary({ title = 'Your request', request, currency, nights }) {
   return (
     <section>
-      <h2>Your request</h2>
+      <h2>{title}</h2>
       <ul>
         {request.offers.map((offer) => (
           <li key={offer.id}>

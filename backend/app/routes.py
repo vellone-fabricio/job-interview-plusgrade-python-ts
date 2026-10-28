@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.db import REQUESTS, SNAPSHOT, STAYS
-from app.models import Offer, OfferRequest, RequestCreate, RequestedOffer, Stay, StayResponse
+from app.models import Offer, OfferRequest, PricedOffer, RequestCreate, Stay, StayResponse
 
 router = APIRouter(prefix="/stay", tags=["stays"])
 
@@ -13,13 +13,17 @@ def get_stay_or_404(reservation_id: str) -> Stay:
     return stay
 
 
-def bookable_offers(stay: Stay) -> list[Offer]:
-    return [o for o in stay.offers if o.bookable_until >= SNAPSHOT.generated_at]
-
-
-def offer_total(offer: Offer, nights: int) -> RequestedOffer:
+def offer_total(offer: Offer, nights: int) -> PricedOffer:
     quantity = nights if offer.per == "night" else 1
-    return RequestedOffer(**offer.model_dump(), total=offer.price * quantity)
+    return PricedOffer(**offer.model_dump(), total=offer.price * quantity)
+
+
+def bookable_offers(stay: Stay) -> list[PricedOffer]:
+    return [
+        offer_total(o, stay.nights)
+        for o in stay.offers
+        if o.bookable_until >= SNAPSHOT.generated_at
+    ]
 
 
 @router.get("/{reservation_id}")
@@ -47,7 +51,7 @@ def create_request(reservation_id: str, body: RequestCreate) -> OfferRequest:
             status_code=422, detail=f"No longer available: {', '.join(unavailable)}"
         )
 
-    offers = [offer_total(available[offer_id], stay.nights) for offer_id in offer_ids]
+    offers = [available[offer_id] for offer_id in offer_ids]
     if sum(o.kind == "upgrade" for o in offers) > 1:
         raise HTTPException(status_code=422, detail="Only one upgrade can be requested")
 

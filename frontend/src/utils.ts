@@ -11,6 +11,9 @@ export const formatUtc = (iso: string): string =>
 export const formatNights = (nights: number): string =>
   `${nights} ${nights === 1 ? 'night' : 'nights'}`
 
+export const sumTotals = (offers: { total: string | number }[]): number =>
+  offers.reduce((sum, offer) => sum + Number(offer.total), 0)
+
 export function toggleInSet<T>(set: Set<T>, item: T): Set<T> {
   const next = new Set(set)
   if (next.has(item)) next.delete(item)

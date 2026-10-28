@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react'
+import ConfirmModal from '../components/ConfirmModal'
 import CurrentTime from '../components/CurrentTime'
 import OfferList from '../components/OfferList'
 import RequestSummary from '../components/RequestSummary'
-import { api, formatNights, toggleInSet } from '../utils'
+import { api, formatNights, sumTotals, toggleInSet } from '../utils'
 
 function StayPage({ reservationId }) {
   const [stay, setStay] = useState(null)
   const [error, setError] = useState(null)
   const [selected, setSelected] = useState(new Set())
+  const [confirming, setConfirming] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState(null)
   const stayPath = `/stay/${encodeURIComponent(reservationId)}`
@@ -20,21 +22,27 @@ function StayPage({ reservationId }) {
       .catch((err) => setError(err.message))
   }, [stayPath])
 
-  async function submit() {
+  async function submit(offerIds) {
     setSubmitting(true)
     setSubmitError(null)
     try {
       const request = await api(`${stayPath}/request`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ offer_ids: [...selected] }),
+        body: JSON.stringify({ offer_ids: offerIds }),
       })
       setStay((prev) => ({ ...prev, request }))
+      setConfirming(false)
     } catch (err) {
       setSubmitError(err.message)
     } finally {
       setSubmitting(false)
     }
+  }
+
+  function cancel() {
+    setConfirming(false)
+    setSubmitError(null)
   }
 
   if (error) return <p>{error}</p>
@@ -47,6 +55,7 @@ function StayPage({ reservationId }) {
   const isDisabled = (offer) =>
     offer.kind === 'upgrade' && chosenUpgrade !== undefined && chosenUpgrade.id !== offer.id
   const listProps = { currency, selected, onToggle: toggle, isDisabled }
+  const selectedOffers = stay.offers.filter((offer) => selected.has(offer.id))
 
   return (
     <main>
@@ -68,12 +77,22 @@ function StayPage({ reservationId }) {
           />
           <OfferList title="Extras" offers={byKind('extra')} {...listProps} />
           <div className="actions">
-            <button type="button" onClick={submit} disabled={selected.size === 0 || submitting}>
-              {submitting ? 'Sending…' : 'Request'}
+            <button type="button" onClick={() => setConfirming(true)} disabled={selected.size === 0}>
+              Request
             </button>
-            {submitError && <p className="error">{submitError}</p>}
           </div>
         </>
+      )}
+      {confirming && (
+        <ConfirmModal
+          request={{ offers: selectedOffers, total: sumTotals(selectedOffers) }}
+          currency={currency}
+          nights={stay.nights}
+          submitting={submitting}
+          error={submitError}
+          onConfirm={() => submit(selectedOffers.map((offer) => offer.id))}
+          onCancel={cancel}
+        />
       )}
     </main>
   )

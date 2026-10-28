@@ -34,16 +34,17 @@ class RequestCreate(BaseModel):
     offer_ids: list[str] = Field(min_length=1)
 
 
-class RequestedOffer(Offer):
+class PricedOffer(Offer):
     total: Decimal
 
 
 class OfferRequest(BaseModel):
-    offers: list[RequestedOffer]
+    offers: list[PricedOffer]
     total: Decimal
 
 
 class StayResponse(Stay):
+    offers: list[PricedOffer]
     generated_at: AwareDatetime
     request: OfferRequest | None = None
 
