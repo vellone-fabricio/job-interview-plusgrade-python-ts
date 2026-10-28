@@ -8,6 +8,33 @@ const formatPrice = (amount, currency) =>
 const formatUtc = (iso) =>
   new Date(iso).toLocaleString(undefined, { timeZone: 'UTC', timeZoneName: 'short' })
 
+const api = async (path, options) => {
+  const res = await fetch(`${API_URL}${path}`, options)
+  const body = await res.json().catch(() => ({}))
+  if (!res.ok) throw new Error(typeof body.detail === 'string' ? body.detail : 'Something went wrong')
+  return body
+}
+
+function RequestSummary({ request, currency, nights }) {
+  return (
+    <section>
+      <h2>Your request</h2>
+      <ul>
+        {request.offers.map((offer) => (
+          <li key={offer.id}>
+            <strong>{offer.name}</strong>: {formatPrice(offer.total, currency)}
+            <small>
+              {formatPrice(offer.price, currency)} per {offer.per}
+              {offer.per === 'night' && ` × ${nights} ${nights === 1 ? 'night' : 'nights'}`}
+            </small>
+          </li>
+        ))}
+      </ul>
+      <p className="total">Total: {formatPrice(request.total, currency)}</p>
+    </section>
+  )
+}
+
 function OfferList({ title, hint, offers, currency, selected, onToggle, isDisabled }) {
   if (offers.length === 0) return null
   return (
@@ -41,6 +68,9 @@ function StayPage({ reservationId }) {
   const [stay, setStay] = useState(null)
   const [error, setError] = useState(null)
   const [selected, setSelected] = useState(new Set())
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState(null)
+  const stayPath = `/stay/${encodeURIComponent(reservationId)}`
 
   const toggle = (id) =>
     setSelected((prev) => {
@@ -51,14 +81,23 @@ function StayPage({ reservationId }) {
     })
 
   useEffect(() => {
-    fetch(`${API_URL}/stay/${encodeURIComponent(reservationId)}`)
-      .then((res) => {
-        if (!res.ok) throw new Error(res.status === 404 ? 'Stay not found' : 'Could not load stay')
-        return res.json()
-      })
+    api(stayPath)
       .then(setStay)
       .catch((err) => setError(err.message))
-  }, [reservationId])
+  }, [stayPath])
+
+  const submit = () => {
+    setSubmitting(true)
+    setSubmitError(null)
+    api(`${stayPath}/request`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ offer_ids: [...selected] }),
+    })
+      .then((request) => setStay((prev) => ({ ...prev, request })))
+      .catch((err) => setSubmitError(err.message))
+      .finally(() => setSubmitting(false))
+  }
 
   if (error) return <p>{error}</p>
   if (!stay) return <p>Loading…</p>
@@ -81,13 +120,25 @@ function StayPage({ reservationId }) {
         Reservation {stay.reservation_id}: {stay.booked_room}, arriving {stay.arrival_date} for{' '}
         {stay.nights} {stay.nights === 1 ? 'night' : 'nights'}
       </p>
-      <OfferList
-        title="Upgrades"
-        hint="You can choose one upgrade. Untick it to pick a different one."
-        offers={upgrades}
-        {...listProps}
-      />
-      <OfferList title="Extras" offers={byKind('extra')} {...listProps} />
+      {stay.request ? (
+        <RequestSummary request={stay.request} currency={currency} nights={stay.nights} />
+      ) : (
+        <>
+          <OfferList
+            title="Upgrades"
+            hint="You can choose one upgrade. Untick it to pick a different one."
+            offers={upgrades}
+            {...listProps}
+          />
+          <OfferList title="Extras" offers={byKind('extra')} {...listProps} />
+          <div className="actions">
+            <button type="button" onClick={submit} disabled={selected.size === 0 || submitting}>
+              {submitting ? 'Sending…' : 'Request'}
+            </button>
+            {submitError && <p className="error">{submitError}</p>}
+          </div>
+        </>
+      )}
     </main>
   )
 }

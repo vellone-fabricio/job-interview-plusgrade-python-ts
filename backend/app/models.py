@@ -30,8 +30,22 @@ class Stay(BaseModel):
     offers: list[Offer]
 
 
+class RequestCreate(BaseModel):
+    offer_ids: list[str] = Field(min_length=1)
+
+
+class RequestedOffer(Offer):
+    total: Decimal
+
+
+class OfferRequest(BaseModel):
+    offers: list[RequestedOffer]
+    total: Decimal
+
+
 class StayResponse(Stay):
     generated_at: AwareDatetime
+    request: OfferRequest | None = None
 
 
 class Snapshot(BaseModel):
