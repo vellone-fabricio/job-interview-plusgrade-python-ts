@@ -33,8 +33,24 @@ li + li {
   margin-top: 0.75rem;
 }
 
-li p,
-li small {
+li small,
+.hint {
   display: block;
   color: #666;
+}
+
+.hint {
+  margin-bottom: 0.5rem;
+}
+
+label {
+  display: flex;
+  gap: 0.75rem;
+  align-items: baseline;
+  cursor: pointer;
+}
+
+label.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }

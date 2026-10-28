@@ -8,17 +8,28 @@ const formatPrice = (amount, currency) =>
 const formatUtc = (iso) =>
   new Date(iso).toLocaleString(undefined, { timeZone: 'UTC', timeZoneName: 'short' })
 
-function OfferList({ title, offers, currency }) {
+function OfferList({ title, hint, offers, currency, selected, onToggle, isDisabled }) {
   if (offers.length === 0) return null
   return (
     <section>
       <h2>{title}</h2>
+      {hint && <p className="hint">{hint}</p>}
       <ul>
         {offers.map((offer) => (
           <li key={offer.id}>
-            <strong>{offer.name}</strong>: {formatPrice(offer.price, currency)} per {offer.per}
-            {offer.description && <p>{offer.description}</p>}
-            <small>Bookable until {formatUtc(offer.bookable_until)}</small>
+            <label className={isDisabled(offer) ? 'disabled' : undefined}>
+              <input
+                type="checkbox"
+                checked={selected.has(offer.id)}
+                disabled={isDisabled(offer)}
+                onChange={() => onToggle(offer.id)}
+              />
+              <span>
+                <strong>{offer.name}</strong>: {formatPrice(offer.price, currency)} per {offer.per}
+                {offer.description && <small>{offer.description}</small>}
+                <small>Bookable until {formatUtc(offer.bookable_until)}</small>
+              </span>
+            </label>
           </li>
         ))}
       </ul>
@@ -29,6 +40,15 @@ function OfferList({ title, offers, currency }) {
 function StayPage({ reservationId }) {
   const [stay, setStay] = useState(null)
   const [error, setError] = useState(null)
+  const [selected, setSelected] = useState(new Set())
+
+  const toggle = (id) =>
+    setSelected((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
 
   useEffect(() => {
     fetch(`${API_URL}/stay/${encodeURIComponent(reservationId)}`)
@@ -45,6 +65,11 @@ function StayPage({ reservationId }) {
 
   const { currency } = stay.hotel
   const byKind = (kind) => stay.offers.filter((offer) => offer.kind === kind)
+  const upgrades = byKind('upgrade')
+  const chosenUpgrade = upgrades.find((offer) => selected.has(offer.id))
+  const isDisabled = (offer) =>
+    offer.kind === 'upgrade' && chosenUpgrade !== undefined && chosenUpgrade.id !== offer.id
+  const listProps = { currency, selected, onToggle: toggle, isDisabled }
 
   return (
     <main>
@@ -53,8 +78,13 @@ function StayPage({ reservationId }) {
         Reservation {stay.reservation_id}: {stay.booked_room}, arriving {stay.arrival_date} for{' '}
         {stay.nights} {stay.nights === 1 ? 'night' : 'nights'}
       </p>
-      <OfferList title="Upgrades" offers={byKind('upgrade')} currency={currency} />
-      <OfferList title="Extras" offers={byKind('extra')} currency={currency} />
+      <OfferList
+        title="Upgrades"
+        hint="You can choose one upgrade. Untick it to pick a different one."
+        offers={upgrades}
+        {...listProps}
+      />
+      <OfferList title="Extras" offers={byKind('extra')} {...listProps} />
     </main>
   )
 }
