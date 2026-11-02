@@ -10,15 +10,21 @@ function ConfirmModal({ request, currency, nights, submitting, error, onConfirm,
   }, [])
 
   return (
-    <dialog ref={dialogRef} className={styles.modal} onClose={onCancel}>
+    <dialog
+      ref={dialogRef}
+      className={styles.modal}
+      aria-labelledby="confirm-modal-title"
+      onClose={onCancel}
+    >
       <RequestSummary
         title="Confirm your request"
+        titleId="confirm-modal-title"
         request={request}
         currency={currency}
         nights={nights}
       />
       <p>Do you want to request these for your stay?</p>
-      {error && <p className={styles.error}>{error}</p>}
+      {error && <p className={styles.error} role="alert">{error}</p>}
       <div className={styles.actions}>
         <button type="button" onClick={onConfirm} disabled={submitting}>
           {submitting ? 'Sending…' : 'Yes'}

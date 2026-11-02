@@ -1,4 +1,6 @@
+from concurrent.futures import ThreadPoolExecutor
 from decimal import Decimal
+from threading import Barrier
 
 import pytest
 from fastapi.testclient import TestClient
@@ -84,3 +86,28 @@ def test_duplicate_offer_ids_are_counted_once():
 def test_stay_accepts_only_one_request():
     assert request_offers("LIS-1042", "L3").status_code == 201
     assert request_offers("LIS-1042", "L5").status_code == 409
+
+
+def test_concurrent_requests_for_same_stay_only_accept_one(monkeypatch):
+    from app import routes
+
+    both_requests_started = Barrier(2)
+    get_stay = routes.get_stay_or_404
+
+    def synchronized_get_stay(reservation_id):
+        stay = get_stay(reservation_id)
+        both_requests_started.wait(timeout=5)
+        return stay
+
+    monkeypatch.setattr(routes, "get_stay_or_404", synchronized_get_stay)
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        responses = list(
+            pool.map(
+                lambda offer_id: request_offers("LIS-1042", offer_id),
+                ("L3", "L5"),
+            )
+        )
+
+    assert sorted(response.status_code for response in responses) == [201, 409]
+    assert REQUESTS["LIS-1042"].offers[0].id in {"L3", "L5"}

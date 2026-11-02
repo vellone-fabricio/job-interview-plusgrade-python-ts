@@ -1,10 +1,10 @@
 import { formatNights, formatPrice } from '../utils'
 import styles from './RequestSummary.module.css'
 
-function RequestSummary({ title = 'Your request', request, currency, nights }) {
+function RequestSummary({ title = 'Your request', titleId, request, currency, nights }) {
   return (
     <section>
-      <h2>{title}</h2>
+      <h2 id={titleId}>{title}</h2>
       <ul>
         {request.offers.map((offer) => (
           <li key={offer.id}>

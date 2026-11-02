@@ -1,4 +1,5 @@
 from pathlib import Path
+from threading import Lock
 
 from app.models import OfferRequest, Snapshot
 
@@ -7,3 +8,4 @@ SNAPSHOT = Snapshot.model_validate_json(
 )
 STAYS = {stay.reservation_id: stay for stay in SNAPSHOT.stays}
 REQUESTS: dict[str, OfferRequest] = {}
+REQUESTS_LOCK = Lock()

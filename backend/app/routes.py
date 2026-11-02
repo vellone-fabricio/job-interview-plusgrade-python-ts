@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from app.db import REQUESTS, SNAPSHOT, STAYS
+from app.db import REQUESTS, REQUESTS_LOCK, SNAPSHOT, STAYS
 from app.models import Offer, OfferRequest, PricedOffer, RequestCreate, Stay, StayResponse
 
 router = APIRouter(prefix="/stay", tags=["stays"])
@@ -40,20 +40,25 @@ def get_stay(reservation_id: str) -> StayResponse:
 @router.post("/{reservation_id}/request", status_code=201)
 def create_request(reservation_id: str, body: RequestCreate) -> OfferRequest:
     stay = get_stay_or_404(reservation_id)
-    if reservation_id in REQUESTS:
-        raise HTTPException(status_code=409, detail="A request was already made for this stay")
+    # Keep the one-request check and insert atomic across FastAPI worker threads.
+    with REQUESTS_LOCK:
+        if reservation_id in REQUESTS:
+            raise HTTPException(
+                status_code=409, detail="A request was already made for this stay"
+            )
 
-    available = {o.id: o for o in bookable_offers(stay)}
-    offer_ids = list(dict.fromkeys(body.offer_ids))
-    unavailable = [offer_id for offer_id in offer_ids if offer_id not in available]
-    if unavailable:
-        raise HTTPException(
-            status_code=422, detail=f"No longer available: {', '.join(unavailable)}"
-        )
+        available = {o.id: o for o in bookable_offers(stay)}
+        offer_ids = list(dict.fromkeys(body.offer_ids))
+        unavailable = [offer_id for offer_id in offer_ids if offer_id not in available]
+        if unavailable:
+            raise HTTPException(
+                status_code=422, detail=f"No longer available: {', '.join(unavailable)}"
+            )
 
-    offers = [available[offer_id] for offer_id in offer_ids]
-    if sum(o.kind == "upgrade" for o in offers) > 1:
-        raise HTTPException(status_code=422, detail="Only one upgrade can be requested")
+        offers = [available[offer_id] for offer_id in offer_ids]
+        if sum(o.kind == "upgrade" for o in offers) > 1:
+            raise HTTPException(status_code=422, detail="Only one upgrade can be requested")
 
-    REQUESTS[reservation_id] = OfferRequest(offers=offers, total=sum(o.total for o in offers))
-    return REQUESTS[reservation_id]
+        request = OfferRequest(offers=offers, total=sum(o.total for o in offers))
+        REQUESTS[reservation_id] = request
+        return request
